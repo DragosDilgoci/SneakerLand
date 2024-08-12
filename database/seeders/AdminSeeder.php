@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
             $user = new User();
             $user->name = 'Admin User';
             $user->email = 'admin@practica.local';
-            $user->password = Hash::make('parola');
+            $user->password = Hash::make('123.321A');
             $user->save();
         }
     }
