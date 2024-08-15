@@ -5,8 +5,11 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ user = {}, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+
+    const userName = user?.name || 'Guest';
+    const userEmail = user?.email || '';
 
     return (
         <div className="relative min-h-screen flex flex-col bg-gray-50 text-black/50">
@@ -22,7 +25,7 @@ export default function Authenticated({ user, header, children }) {
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
                                 <Link href="/dashboard">
-                                    <ApplicationLogo/>
+                                    <ApplicationLogo />
                                 </Link>
                             </div>
 
@@ -33,10 +36,10 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink>
                                     Sales
                                 </NavLink>
-                                <NavLink>
+                                <NavLink href={route('categories.list')} active={route().current('categories.list')}>
                                     Categories
                                 </NavLink>
-                                <NavLink>
+                                <NavLink href={route('products.list')} active={route().current('products.list')}>
                                     Products
                                 </NavLink>
                                 <NavLink>
@@ -57,7 +60,7 @@ export default function Authenticated({ user, header, children }) {
                                                 type="button"
                                                 className="inline-flex uppercase items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-customLightblue bg-customPurple hover:text-customPurple/70 hover:bg-customLightblue/70 focus:outline-none transition ease-in-out duration-500"
                                             >
-                                                {user.name}
+                                                {userName}
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -137,8 +140,8 @@ export default function Authenticated({ user, header, children }) {
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
                         <div className="px-4">
-                            <div className="font-medium text-base text-customLightblue">{user.name}</div>
-                            <div className="font-medium text-sm text-customLightblue">{user.email}</div>
+                            <div className="font-medium text-base text-customLightblue">{userName}</div>
+                            <div className="font-medium text-sm text-customLightblue">{userEmail}</div>
                         </div>
 
                         <div className="mt-3 space-y-1">
