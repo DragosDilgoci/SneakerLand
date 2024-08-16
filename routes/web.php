@@ -42,9 +42,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     ], function () {
         Route::get('/', [ProductController::class, 'list'])->name('products.list');
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
-        Route::get('/edit/{product}', [ProductController::class, 'update'])->name('products.update');
-        Route::post('store/{product?}', [ProductController::class, 'store'])->name('products.store');
-        Route::delete('delete/{product}', [ProductController::class, 'delete'])->name('products.delete');
+        Route::get('/edit/{product}', [ProductController::class, 'edit'])->name('products.edit');
+        Route::post('/store', [ProductController::class, 'store'])->name('products.store');
+        Route::patch('/update/{product}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/delete/{product}', [ProductController::class, 'delete'])->name('products.delete');
         Route::get('/{product}', [ProductController::class, 'view'])->name('products.view');
     });
 });

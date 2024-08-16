@@ -22,21 +22,21 @@ export default function AddEdit({ auth, product, categories }) {
 
     const submit = async (e) => {
         e.preventDefault();
-
+    
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('category_id', data.category_id);
         formData.append('price', data.price);
         formData.append('description', data.description);
-
+    
         images.forEach((image, index) => {
             formData.append(`images[${index}]`, image);
         });
-
-        const productRoute = product ? route('products.update', product.id) : route('products.store');
-
+    
+        const url = product ? route('products.update', product.id) : route('products.store');
+    
         try {
-            await axios.post(productRoute, formData, {
+            await axios.patch(url, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

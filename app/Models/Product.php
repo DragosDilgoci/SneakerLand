@@ -12,6 +12,15 @@ class Product extends Model
 {
     use HasTimestamps;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($product) {
+            $product->images()->delete();
+        });
+    }
+
     public function images(): HasMany
     {
         return $this->hasMany(ProductImage::class);
