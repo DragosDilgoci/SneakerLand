@@ -1,14 +1,15 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import {Head, useForm} from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import InputLabel from "@/Components/InputLabel.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
-import {useState} from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 
-export default function AddEdit({auth, product, categories}) {
+export default function AddEdit({ auth, product, categories }) {
     const [images, setImages] = useState([]);
-    const {data, setData, post, errors, processing} = useForm({
+    const { data, setData, errors, processing } = useForm({
         name: product?.name || '',
         category_id: product?.category_id || '',
         price: product?.price || '',
@@ -19,7 +20,7 @@ export default function AddEdit({auth, product, categories}) {
         setImages(Array.from(e.target.files));
     };
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
@@ -32,25 +33,33 @@ export default function AddEdit({auth, product, categories}) {
             formData.append(`images[${index}]`, image);
         });
 
-        let productRoute = product ? route('products.store', [product.id]) : route('products.store');
-        post(productRoute, {
-            data: formData,
-            preserveState: true,
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const productRoute = product ? route('products.update', product.id) : route('products.store');
+
+        try {
+            await axios.post(productRoute, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            window.location.href = route('products.list'); 
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
     };
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title={product ? 'Edit product' : 'Add product'}/>
+            <Head title={product ? 'Edit product' : 'Add product'} />
             <div>
                 <div className="py-4 px-4">
-                    <div className={'text-xl font-bold'}>{product ? 'Edit product' : 'Add product'}</div>
+                    <div className="text-xl font-bold">
+                        {product ? 'Edit product' : 'Add product'}
+                    </div>
 
                     <div className="mt-6 relative">
                         <form onSubmit={submit} className="mt-6 space-y-6">
                             <div>
-                                <InputLabel htmlFor="name" value="Name"/>
+                                <InputLabel htmlFor="name" value="Name" />
                                 <TextInput
                                     id="name"
                                     className="mt-1 block w-full"
@@ -59,10 +68,10 @@ export default function AddEdit({auth, product, categories}) {
                                     required
                                     isFocused
                                 />
-                                <InputError className="mt-2" message={errors.name}/>
+                                <InputError className="mt-2" message={errors.name} />
                             </div>
                             <div>
-                                <InputLabel htmlFor="category_id" value="Category"/>
+                                <InputLabel htmlFor="category_id" value="Category" />
                                 <select
                                     id="category_id"
                                     name="category_id"
@@ -72,16 +81,16 @@ export default function AddEdit({auth, product, categories}) {
                                     required
                                 >
                                     <option value="">Select a category</option>
-                                    {categories && categories.length > 0 && categories.map((category) => (
+                                    {categories?.map((category) => (
                                         <option key={category.id} value={category.id}>
                                             {category.name}
                                         </option>
                                     ))}
                                 </select>
-                                <InputError className="mt-2" message={errors.category_id}/>
+                                <InputError className="mt-2" message={errors.category_id} />
                             </div>
                             <div>
-                                <InputLabel htmlFor="price" value="Price"/>
+                                <InputLabel htmlFor="price" value="Price" />
                                 <TextInput
                                     id="price"
                                     type="number"
@@ -90,10 +99,10 @@ export default function AddEdit({auth, product, categories}) {
                                     onChange={(e) => setData('price', e.target.value)}
                                     required
                                 />
-                                <InputError className="mt-2" message={errors.price}/>
+                                <InputError className="mt-2" message={errors.price} />
                             </div>
                             <div>
-                                <InputLabel htmlFor="description" value="Description"/>
+                                <InputLabel htmlFor="description" value="Description" />
                                 <textarea
                                     id="description"
                                     name="description"
@@ -101,10 +110,10 @@ export default function AddEdit({auth, product, categories}) {
                                     value={data.description}
                                     onChange={(e) => setData('description', e.target.value)}
                                 />
-                                <InputError className="mt-2" message={errors.description}/>
+                                <InputError className="mt-2" message={errors.description} />
                             </div>
                             <div>
-                                <InputLabel htmlFor="images" value="Images"/>
+                                <InputLabel htmlFor="images" value="Images" />
                                 <input
                                     id="images"
                                     type="file"
@@ -112,7 +121,7 @@ export default function AddEdit({auth, product, categories}) {
                                     multiple
                                     onChange={handleFileChange}
                                 />
-                                <InputError className="mt-2" message={errors.images}/>
+                                <InputError className="mt-2" message={errors.images} />
                             </div>
                             <div className="flex items-center gap-4">
                                 <PrimaryButton disabled={processing}>Save</PrimaryButton>

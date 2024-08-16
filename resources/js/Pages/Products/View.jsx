@@ -1,11 +1,10 @@
-// resources/js/Pages/Products/View.jsx
-
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head} from '@inertiajs/react';
 import {useState} from 'react';
 
 export default function View({auth, product}) {
-    const [mainImage, setMainImage] = useState(product.images[0]?.url || 'default-image-url.jpg');
+    // Verify that the URL is correct
+    const [mainImage, setMainImage] = useState(product.images[0]?.url || '/default-image-url.jpg');
 
     return (
         <AuthenticatedLayout user={auth.user}>

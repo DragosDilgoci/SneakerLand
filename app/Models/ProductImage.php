@@ -10,7 +10,7 @@ class ProductImage extends Model
 {
     use HasTimestamps;
 
-    protected $fillable = ['product_id', 'path'];
+    public $fillable = ['product_id', 'path'];
 
     public function product(): BelongsTo
     {

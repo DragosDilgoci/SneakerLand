@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Storage;
 
 class ProductController extends Controller
 {
@@ -56,12 +57,16 @@ public function store(ProductRequest $request, ?Product $product = null)
     }
 
     public function view(Product $product)
-    {
-        $product->load('category');
+{
+    $product->load('category', 'images');
 
-        return Inertia::render('Products/View', [
-            'product' => $product->load('images'),
-        ]);
-    }
+    $product->images->each(function ($image) {
+        $image->url = Storage::url($image->path);
+    });
+
+    return Inertia::render('Products/View', [
+        'product' => $product,
+    ]);
+}
 
 }
