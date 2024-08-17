@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -47,6 +48,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::delete('delete/{product}', [ProductController::class, 'delete'])->name('products.delete');
         Route::get('/{product}', [ProductController::class, 'view'])->name('products.view');
     });
+
+    Route::post('/upload', [FileUploadController::class, 'upload'])->name('file.upload');
+
 });
 
 require __DIR__.'/auth.php';

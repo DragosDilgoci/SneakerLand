@@ -4,11 +4,17 @@ import InputLabel from "@/Components/InputLabel.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
-import { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { FilePond, registerPlugin } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+
+registerPlugin(FilePondPluginImagePreview, FilePondPluginImageExifOrientation);
 
 export default function AddEdit({ auth, product, categories }) {
-    const [images, setImages] = useState([]);
+    const [files, setFiles] = useState([]);
     const { data, setData, errors, processing } = useForm({
         name: product?.name || '',
         category_id: product?.category_id || '',
@@ -16,34 +22,43 @@ export default function AddEdit({ auth, product, categories }) {
         description: product?.description || '',
     });
 
-    const handleFileChange = (e) => {
-        setImages(Array.from(e.target.files));
+    const handleFilePondUpdate = (fileItems) => {
+        const fileList = fileItems.map(fileItem => fileItem.file);
+        setFiles(fileList);
     };
 
     const submit = async (e) => {
         e.preventDefault();
-    
+
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('category_id', data.category_id);
         formData.append('price', data.price);
         formData.append('description', data.description);
-    
-        images.forEach((image, index) => {
-            formData.append(`images[${index}]`, image);
+
+        files.forEach((file, index) => {
+            formData.append(`images[${index}]`, file);
         });
-    
+
         const url = product ? route('products.update', product.id) : route('products.store');
-    
+
         try {
-            await axios.patch(url, formData, {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 },
             });
-            window.location.href = route('products.list'); 
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An error occurred');
+            }
+
+            window.location.href = route('products.list');
         } catch (error) {
-            console.error('An error occurred:', error);
+            console.error('An error occurred:', error.message);
         }
     };
 
@@ -55,7 +70,6 @@ export default function AddEdit({ auth, product, categories }) {
                     <div className="text-xl font-bold">
                         {product ? 'Edit product' : 'Add product'}
                     </div>
-
                     <div className="mt-6 relative">
                         <form onSubmit={submit} className="mt-6 space-y-6">
                             <div>
@@ -112,18 +126,28 @@ export default function AddEdit({ auth, product, categories }) {
                                 />
                                 <InputError className="mt-2" message={errors.description} />
                             </div>
-                            <div>
+                            <div> 
                                 <InputLabel htmlFor="images" value="Images" />
-                                <input
-                                    id="images"
-                                    type="file"
-                                    className="mt-1 block w-full text-customLightblue"
-                                    multiple
-                                    onChange={handleFileChange}
+                                <FilePond
+                                    files={files}
+                                    onupdatefiles={handleFilePondUpdate}
+                                    allowMultiple={true}
+                                    maxFiles={5}
+                                    server={{
+                                        process: {
+                                            url: '/upload',
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                            },
+                                        },
+                                    }}
+                                    name="images"
+                                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
                                 />
                                 <InputError className="mt-2" message={errors.images} />
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 relative z-40">
                                 <PrimaryButton disabled={processing}>Save</PrimaryButton>
                             </div>
                         </form>
