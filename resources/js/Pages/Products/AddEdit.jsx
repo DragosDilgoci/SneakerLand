@@ -40,7 +40,7 @@ export default function AddEdit({ auth, product, categories }) {
             formData.append(`images[${index}]`, file);
         });
 
-        const url = product ? route('products.update', product.id) : route('products.store');
+        const url = product ? route('products.post.edit', product.id) : route('products.store');
 
         try {
             const response = await fetch(url, {

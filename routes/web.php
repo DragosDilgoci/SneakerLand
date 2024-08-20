@@ -45,9 +45,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
         Route::get('/edit/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::post('store/{product?}', [ProductController::class, 'store'])->name('products.store');
+        Route::post('/edit/{product}', [ProductController::class, 'store'])->name('products.post.edit');
         Route::delete('delete/{product}', [ProductController::class, 'delete'])->name('products.delete');
         Route::get('/{product}', [ProductController::class, 'view'])->name('products.view');
     });
+    
 
     Route::post('/upload', [FileUploadController::class, 'upload'])->name('file.upload');
 
