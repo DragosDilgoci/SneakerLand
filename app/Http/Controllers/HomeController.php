@@ -13,7 +13,7 @@ class HomeController extends Controller
     {
         $products = Product::with(['category', 'images'])->paginate(3)->withQueryString();
 
-        return Inertia::render('Welcome', [
+        return Inertia::render('Home', [
             'products' => $products
         ]);
     }
