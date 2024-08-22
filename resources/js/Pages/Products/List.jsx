@@ -1,14 +1,45 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Fragment } from 'react';
+import { Fragment, useState, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faPlus, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
+import PaginationOutlined from '@/Components/Pagination';
 
 export default function List({ auth, products }) {
     const { delete: deleteProduct } = useForm({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const itemsPerPage = 5;
+
+    const categories = useMemo(() => {
+        const uniqueCategories = new Set(products.map(product => product.category?.name || 'No category'));
+        return ['All', ...Array.from(uniqueCategories)];
+    }, [products]);
+
+    const filteredProducts = useMemo(() => {
+        if (selectedCategory === 'All') {
+            return products;
+        }
+        return products.filter(product => product.category?.name === selectedCategory);
+    }, [products, selectedCategory]);
+
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
     const handleDelete = (id) => {
         deleteProduct(route('products.delete', [id]));
+    };
+
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
+
+    const handleCategoryChange = (event) => {
+        setSelectedCategory(event.target.value);
+        setCurrentPage(1);
     };
 
     return (
@@ -24,6 +55,20 @@ export default function List({ auth, products }) {
                         </Link>
                     </div>
 
+                    <div className="my-4 relative">
+                        <label htmlFor="category-filter" className="mr-2 font-bold">Filter by Category:</label>
+                        <select
+                            id="category-filter"
+                            value={selectedCategory}
+                            onChange={handleCategoryChange}
+                            className="p-2 border rounded"
+                        >
+                            {categories.map((category, index) => (
+                                <option key={index} value={category}>{category}</option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="mt-6 z-10 relative">
                         <div className="grid grid-cols-5 text-white">
                             <div className="font-bold mb-3">ID</div>
@@ -32,7 +77,7 @@ export default function List({ auth, products }) {
                             <div className="font-bold mb-3">Description</div>
                             <div className="font-bold mb-3">Actions</div>
 
-                            {products.map((product, index) => (
+                            {currentItems.map((product, index) => (
                                 <Fragment key={index}>
                                     <div className="mb-2">{product.id}</div>
                                     <div className="mb-2">{product.name}</div>
@@ -59,6 +104,13 @@ export default function List({ auth, products }) {
                                     </div>
                                 </Fragment>
                             ))}
+                        </div>
+                        <div className='flex justify-center mt-6'>
+                            <PaginationOutlined 
+                                count={totalPages} 
+                                page={currentPage} 
+                                onChange={handlePageChange} 
+                            />
                         </div>
                     </div>
                 </div>

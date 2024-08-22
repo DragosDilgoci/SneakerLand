@@ -24,13 +24,13 @@ export default function Authenticated({ user = {}, header, children }) {
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
-                                <Link href="/dashboard">
+                                <Link href="/home">
                                     <ApplicationLogo />
                                 </Link>
                             </div>
 
                             <div className="hidden space-x-8 lg:flex lg:items-center">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
+                                <NavLink href={route('home')} active={route().current('home')}>
                                     Home
                                 </NavLink>
                                 <NavLink>
@@ -115,25 +115,22 @@ export default function Authenticated({ user = {}, header, children }) {
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' lg:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Home
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Sales
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Categories
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Products
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Visit Us
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
                             Contact
                         </ResponsiveNavLink>
                     </div>
@@ -156,7 +153,7 @@ export default function Authenticated({ user = {}, header, children }) {
 
             {header && (
                 <header className="bg-white shadow w-full py-8 px-4 sm:px-6 lg:px-8 border">
-                    <NavLink href={route('dashboard')} active={route().current('dashboard')} className="max-w-full mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</NavLink>
+                    <NavLink href={route('home')} active={route().current('home')} className="max-w-full mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</NavLink>
                 </header>
             )}
 

@@ -17,7 +17,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <nav className="flex space-x-4">
                         {auth.user ? (
                             <Link
-                                href={route('dashboard')}
+                                href={route('home')}
                                 className="rounded-md px-3 py-2 text-customLightblue ring-1 ring-transparent transition hover:text-customPurple focus:outline-none"
                             >
                                 Home
