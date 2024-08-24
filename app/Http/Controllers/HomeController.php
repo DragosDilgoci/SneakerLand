@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['category', 'images'])->paginate(3)->withQueryString();
+        $products = Product::with(['category', 'images'])->orderBy('name')->get();
 
         return Inertia::render('Home', [
             'products' => $products
